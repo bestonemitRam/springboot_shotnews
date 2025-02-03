@@ -24,6 +24,7 @@ public class Post extends BaseEntity{
     private Boolean isHot;
     private Boolean isSlider;  // Nullable to allow optional setting
     private Boolean isLive;
+    private Boolean isHandpicked;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)

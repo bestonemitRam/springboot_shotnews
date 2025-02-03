@@ -229,6 +229,7 @@ public class HomeNewsServiceImplements implements HomeNewsService
 
          groundNewsList=  groundNewsList.stream()
                  .map(news -> {
+
                      GroundNews dto = new GroundNews();
 
                      dto.setImage( baseUrl+ AppConstant.imageUrl+news.getImage());

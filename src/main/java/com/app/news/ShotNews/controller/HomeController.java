@@ -18,9 +18,7 @@ public class HomeController {
 
     @Autowired
     HomeNewsService homeNewsService;
-
-
-    @PostMapping("/createHotNews")
+ @PostMapping("/createHotNews")
     public ResponseEntity<ResponseApi> createHotNews(@RequestParam String title, @RequestParam String description, @RequestParam MultipartFile img) {
        return new ResponseEntity<>(ResponseApi
                 .builder()
@@ -30,61 +28,40 @@ public class HomeController {
 
 
     }
-
-    @PostMapping("/createHomeSlider")
+@PostMapping("/createHomeSlider")
     public ResponseEntity<ResponseApi> createHomeSlider(@RequestParam String title, @RequestParam String description, @RequestParam MultipartFile img) {
          return new ResponseEntity<>(ResponseApi
                 .builder()
                 .status(homeNewsService.createHomeSlider(title, description, img))
                 .message(AppConstant.response)
                 .build(), HttpStatus.CREATED);
-
-
-    }
-
-    @PostMapping("/liveNews")
-    public ResponseEntity<ResponseApi> createLiveNews(@RequestParam String title, @RequestParam String description, @RequestParam MultipartFile url, @RequestParam String urlType) {
+ }
+ @PostMapping("/liveNews")
+ public ResponseEntity<ResponseApi> createLiveNews(@RequestParam String title, @RequestParam String description, @RequestParam MultipartFile url, @RequestParam String urlType) {
         return new ResponseEntity<>(ResponseApi
                 .builder()
                 .status(homeNewsService.createLiveNews(title, description, urlType, url))
                 .message(AppConstant.response)
                 .build(), HttpStatus.CREATED);
-
-
-    }
-
-
-    @PostMapping("/groundNews")
-    public ResponseEntity<ResponseApi> createGroundNews(@RequestParam String title, @RequestParam String description, @RequestParam MultipartFile url,@RequestParam String originType)
+ }
+ @PostMapping("/groundNews")
+ public ResponseEntity<ResponseApi> createGroundNews(@RequestParam String title, @RequestParam String description, @RequestParam MultipartFile url,@RequestParam String originType)
     {
         return new ResponseEntity<>(ResponseApi
                 .builder()
                 .status(homeNewsService.createGroundLevel(title, description, originType,url))
                 .message(AppConstant.response)
                 .build(), HttpStatus.CREATED);
+ }
 
-
-    }
-
-
-
-
-
-
-
-
-    @GetMapping()
-    public ResponseEntity<ResponseApi> getHomePagedata() {
+ @GetMapping()
+ public ResponseEntity<ResponseApi> getHomePagedata() {
         return new ResponseEntity<>(ResponseApi
                 .builder()
                 .status(true)
                 .message(AppConstant.response)
                 .data(homeNewsService.getHomePageData())
                 .build(), HttpStatus.OK);
-
-
-    }
-
-
+ }
 
 }

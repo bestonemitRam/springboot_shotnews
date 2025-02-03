@@ -1,5 +1,6 @@
 package com.app.news.ShotNews.controller;
 
+import com.app.news.ShotNews.config.AppConstant;
 import com.app.news.ShotNews.entities.Category;
 import com.app.news.ShotNews.entities.Post;
 import com.app.news.ShotNews.entities.Subcategory;
@@ -17,10 +18,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -56,6 +60,7 @@ private String path;
             @RequestParam("isHot") boolean isHot,
             @RequestParam("isSlider") boolean isSlider,
             @RequestParam("isLive") boolean isLive,
+            @RequestParam("isHandpicked") boolean isHandpicked,
             @RequestParam("category_id") Long categoryId,
             @RequestParam(value = "subcategory_id",required = false) Long subcategoryId ,
             @RequestParam("content") String content,
@@ -101,6 +106,8 @@ private String path;
     public ResponseEntity<ResponseApi> getPost(@PathVariable String slug)
     {
 
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
         ResponseApi responseApi =new ResponseApi();
         responseApi.setStatus(true);
         responseApi.setMessage("Found Successfully");
@@ -109,6 +116,9 @@ private String path;
 
         return new ResponseEntity<>(responseApi, HttpStatus.OK);
     }
+
+
+
 
     @GetMapping("/most-viewed")
     public ResponseEntity<List<Post>> getMostViewedPosts()
@@ -122,6 +132,43 @@ private String path;
                                               @RequestParam(value = "subcategorySlug",
                                                       required = false) String subcategorySlug)
     {
-        return postService.getPostsByCategorySlug(categorySlug,subcategorySlug);
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
+
+        return mapPosts(postService.getPostsByCategorySlug(categorySlug,subcategorySlug),baseUrl);
+
+    }
+
+    private List<Post> mapPosts(List<Post> posts, String baseUrl) {
+        return posts.stream().map(post ->
+        {
+            Post mappedPost = new Post();
+            mappedPost.setId(post.getId());
+            mappedPost.setTitle(post.getTitle());
+            mappedPost.setSlug(post.getSlug());
+            mappedPost.setDescription(post.getDescription());
+            mappedPost.setContent(post.getContent());
+            mappedPost.setIsLive(post.getIsLive());
+            mappedPost.setIsSlider(post.getIsSlider());
+            mappedPost.setCategory(post.getCategory());
+            mappedPost.setSubcategory(post.getSubcategory());
+            mappedPost.setCreatedAt(post.getCreatedAt());
+            mappedPost.setUpdatedAt(post.getUpdatedAt());
+            mappedPost.setViews(post.getViews());
+            mappedPost.setIsActive(post.getIsActive());
+            mappedPost.setUrlType(post.getUrlType());
+            mappedPost.setImagePath(baseUrl + AppConstant.imageUrl + post.getImagePath());
+            return mappedPost;
+        }).collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/top4-for-every-category")
+    public ResponseEntity<Map<Category, List<Post>>> getTop4ForEveryCategory() {
+        // Fetch the top 4 posts for each category
+        Map<Category, List<Post>> topPostsMap = postService.findTop4PostsForAllCategories();
+
+        // Return the result
+        return ResponseEntity.ok(topPostsMap);
     }
 }

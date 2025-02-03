@@ -3,8 +3,10 @@ package com.app.news.ShotNews.services.impl;
 
 import com.app.news.ShotNews.config.AppConstant;
 import com.app.news.ShotNews.config.SlugUtils;
+import com.app.news.ShotNews.entities.Category;
 import com.app.news.ShotNews.entities.Post;
 import com.app.news.ShotNews.exceptions.APIException;
+import com.app.news.ShotNews.repositories.CategoryRepository;
 import com.app.news.ShotNews.repositories.PostRepository;
 import com.app.news.ShotNews.response.PostResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,6 +24,8 @@ import java.util.stream.Collectors;
 public class PostServiceImpl {
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     public Post createPost(Post post)
     {
@@ -94,12 +100,29 @@ public class PostServiceImpl {
     }
 
     public List<Post> getPostsByCategorySlug(String categorySlug, String subcategorySlug) {
-        if (subcategorySlug != null && !subcategorySlug.isEmpty()) {
+        if (subcategorySlug != null && !subcategorySlug.isEmpty())
+        {
             // Fetch posts by both category and subcategory slug
             return postRepository.findByCategory_SlugAndSubcategory_Slug(categorySlug, subcategorySlug);
         } else {
             // Fetch posts by category slug only
             return postRepository.findByCategory_Slug(categorySlug);
         }
+    }
+
+    public Map<Category, List<Post>> findTop4PostsForAllCategories() {
+        // Fetch all categories
+        List<Category> categories = categoryRepository.findAll();
+
+        // Create a map to store top 4 posts for each category
+        Map<Category, List<Post>> topPostsMap = new HashMap<>();
+
+        // For each category, get the top 4 most viewed posts
+        for (Category category : categories) {
+//            List<Post> topPosts = postRepository.findTop4PostsByCategorySlug(category.getSlug());
+//            topPostsMap.put(category, topPosts);
+        }
+
+        return topPostsMap;
     }
 }
