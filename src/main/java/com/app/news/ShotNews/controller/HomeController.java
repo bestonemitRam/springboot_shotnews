@@ -49,6 +49,7 @@ public class HomeController {
     {
         return new ResponseEntity<>(ResponseApi
                 .builder()
+                
                 .status(homeNewsService.createGroundLevel(title, description, originType,url))
                 .message(AppConstant.response)
                 .build(), HttpStatus.CREATED);
