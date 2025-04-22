@@ -10,6 +10,9 @@ public class ShotNewsApplication {
 
 	public static void main(String[] args)
 	{
+
+
+
 		SpringApplication.run(ShotNewsApplication.class, args);
 	}
 
